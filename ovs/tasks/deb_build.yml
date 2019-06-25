@@ -7,5 +7,24 @@
       environment:
         DEB_BUILD_OPTIONS: 'parallel=8 nocheck'
       become: true
+    
+    - name: "Copy the built deb binaries to deb directory"
+      copy:
+        src: "{{ item }}"
+        dest: "{{ deb_bin_dir }}"
+      with_fileglob:
+        - "{{ deb_base_dir }}*.deb"
+
+    - name: "Remove deb binaries at root directory"
+      file: 
+        path: "{{ item }}"
+        state: absent
+      with_fileglob:
+        - "{{ deb_base_dir }}*.deb"
+    
+    - name: "Remove openvswitch source directory"
+      file:
+        path: "{{ deb_dir }}"
+        state: absent
 
     when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"

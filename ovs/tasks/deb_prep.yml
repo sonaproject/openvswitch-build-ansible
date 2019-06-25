@@ -8,10 +8,9 @@
 
     - name: "Install OVS dependencies (Debian/Ubuntu)"
       apt:
-        name: "{{ item }}"
-        state: installed
+        name: "{{ deb_deps }}"
+        state: present
         update_cache: yes
       become: true
-      with_items: "{{ deb_deps }}"
 
     when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
