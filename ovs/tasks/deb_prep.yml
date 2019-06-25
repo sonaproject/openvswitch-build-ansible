@@ -1,0 +1,17 @@
+---
+  - block:
+    - name: "Unpack OVS (Debian/Ubuntu)"
+      unarchive:
+        src: "/tmp/{{ ovs_package }}"
+        dest: "{{ deb_base_dir }}"
+      become: true
+
+    - name: "Install OVS dependencies (Debian/Ubuntu)"
+      apt:
+        name: "{{ item }}"
+        state: installed
+        update_cache: yes
+      become: true
+      with_items: "{{ deb_deps }}"
+
+    when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"

@@ -1,21 +1,26 @@
 ---
-- name: set distro-specific variables
+- name: "Set distro-specific variables"
   include_vars: '{{ item }}'
   with_first_found:
     - '{{ ansible_os_family }}.yml'
     - default.yml
 
-- name: Set fact based on OS
+- name: "Set fact based on OS"
   set_fact:
     ovs_dir: "{{ el_dir }}"
   when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
 
-- name: Download OVS
+- name: "Set fact based on OS"
+  set_fact:
+    ovs_dir: "{{ deb_dir }}"
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+- name: "Download OVS"
   get_url:
     url: "{{ ovs_url }}"
     dest: /tmp/
 
-- name: Install Generic OVS dependencies
+- name: "Install Generic OVS dependencies"
   package:
     name: "{{ item }}"
     state: installed
@@ -25,5 +30,11 @@
 - include_tasks: el_prep.yml
   when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
 
-- include_tasks: el_install.yml
+- include_tasks: deb_prep.yml
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"
+
+- include_tasks: el_build.yml
   when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"
+
+- include_tasks: deb_build.yml
+  when: ansible_os_family == "Debian" or ansible_os_family == "Ubuntu"

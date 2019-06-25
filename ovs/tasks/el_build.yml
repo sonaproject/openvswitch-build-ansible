@@ -1,6 +1,6 @@
 ---
   - block:
-    - name: Make OVS userplane for CentOS/RedHat
+    - name: "Make OVS userplane (CentOS/RedHat)"
       command: rpmbuild -bb --without check -D "kversion `uname -r`" rhel/openvswitch.spec
       args:
         chdir: "{{ el_dir }}"
@@ -8,7 +8,7 @@
         RPMBUILD_OPT: '--without check'
       become: true
 
-    - name: Make OVS kernel module for CentOS/RedHat
+    - name: "Make OVS kernel module (CentOS/RedHat)"
       command: rpmbuild -bb --without check -D "kversion `uname -r`" rhel/openvswitch-kmod-fedora.spec
       args:
         chdir: "{{ el_dir }}"
