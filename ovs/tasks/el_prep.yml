@@ -1,5 +1,11 @@
 ---
   - block:
+    - name: Remove workspaces
+      file:
+        path: "{{ el_base_dir }}"
+        state: absent
+      become: true      
+
     - name: Create directory for CentOS/RedHat
       file:
         path: "{{ el_base_dir }}"
@@ -15,6 +21,32 @@
 
     - name: Unpack OVS for CentOS/RedHat
       unarchive: src=/tmp/{{ ovs_package }} dest={{ el_base_dir }}
+      become: true
+
+    - name: Copy patches and script to OVS directory
+      copy:
+        src: "{{ role_path }}/files/"
+        dest: "{{ el_dir }}/"
+        mode: 0755
+      become: true
+
+    - name: Apply OVS custom patches
+      patch:      
+        src: "{{ role_path }}/files/rollback-to-use-openflow-1.4-by-default.patch"
+        basedir: "{{ el_dir }}"
+        strip: 1
+      become: true
+
+    - name: Remove tar files
+      file:
+        path: "{{ el_base_dir }}/{{ ovs_package }}"
+        state: absent
+
+    - name: Compress source files into tar
+      community.general.archive:
+        path: "{{ el_dir }}"
+        dest: "{{ el_base_dir }}/{{ ovs_package }}"
+        format: gz
       become: true
 
     - name: Yum update
@@ -43,5 +75,6 @@
       selinux:
         policy: targeted
         state: permissive
+      become: true
 
     when: ansible_os_family == "CentOS" or ansible_os_family == "RedHat"

@@ -1,6 +1,6 @@
 ---
-ovs_version: 2.10.2
-kernel_version: 3.10.0-957.el7
+ovs_version: 2.14.2
+kernel_version: 3.10.0
 ovs_file: "openvswitch-{{ovs_version}}"
 ovs_package: "{{ovs_file}}.tar.gz"
 ovs_url: "http://openvswitch.org/releases/{{ovs_package}}"
@@ -46,6 +46,8 @@ el_deps:
   - libcap-ng-devel
   - unbound
   - unbound-devel
+  - python3-sphinx
+  - libunwind-devel
 deb_deps:
   - build-essential
   - fakeroot
